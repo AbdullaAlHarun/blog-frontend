@@ -17,12 +17,12 @@ async function fetchAndDisplayPosts() {
         });
 
         if (!response.ok) {
-            throw new Error(`Failed to fetch posts. Status: ${response.status}`);
+            const errorDetails = await response.json();
+            throw new Error(`Failed to fetch posts. Status: ${response.status}, Message: ${errorDetails.message}`);
         }
 
         const posts = await response.json();
         const postsContainer = document.getElementById('postsContainer');
-        
         postsContainer.innerHTML = ''; // Clear previous posts
 
         if (!Array.isArray(posts) || posts.length === 0) {
@@ -57,8 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
 async function createPost(event) {
     event.preventDefault();
 
-    const title = document.getElementById('title').value;
-    const content = document.getElementById('content').value;
+    const title = document.getElementById('title').value.trim();
+    const content = document.getElementById('content').value.trim();
 
     if (!title || !content) {
         alert('Please fill in all fields');
@@ -79,7 +79,8 @@ async function createPost(event) {
         });
 
         if (!response.ok) {
-            throw new Error('Failed to create post');
+            const errorDetails = await response.json();
+            throw new Error(`Failed to create post. Status: ${response.status}, Message: ${errorDetails.message}`);
         }
 
         alert('Post created successfully!');
